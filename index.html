@@ -1,0 +1,77 @@
+<script src="/socket.io/socket.io.js"></script>
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  rel="stylesheet"
+/>
+
+<link
+  href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+  rel="stylesheet"
+/>
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.11.0/mdb.min.css"
+  rel="stylesheet"
+/>
+
+<!-- MDB -->
+<script
+  type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.11.0/mdb.min.js"
+></script>
+<section style="background-color: #eee;">
+    <div class="container">
+  
+      <div class="row d-flex justify-content-center">
+        <div class="col-md-12">
+  
+          <div class="card" id="chat1" style="border-radius: 15px;">
+            <div
+              class="card-header d-flex justify-content-between align-items-center p-3 bg-info text-white border-bottom-0"
+              style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+              <i class="fas fa-angle-left"></i>
+              <p class="mb-0 fw-bold">Live chat</p>
+              <i class="fas fa-times"></i>
+            </div>
+            <div class="card-body" id="main_msg_body">
+  
+                <div class="form-outline">
+                    <div class="row">
+                      <div class="col-md-10" class="form-outline">
+                          <textarea class="form-control" id="textAreaExample" rows="4"></textarea>
+                          <label class="form-label" for="textAreaExample">Type your message</label>
+                      </div>
+                      <div class="col-md-2">
+                          <button class="btn btn-primary" id="senmessahe">Send</button>
+                      </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+  
+        </div>
+      </div>
+  
+    </div>
+  </section>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+<script>
+  var socket = io();
+
+  var input = document.getElementById('textAreaExample');
+    socket.on('welcomemk', (_msg) => {
+        console.log(_msg)
+    })
+
+    socket.on('chat_message', msg => {
+        $("#main_msg_body").prepend(`<div class="d-flex flex-row justify-content-start mb-4"><div class="p-3 ms-3" style="border-radius: 15px; background-color: rgba(57, 192, 237,.2);">  <p class="small mb-0">${msg}</p></div></div>`)
+    })
+
+  $("#senmessahe").click(function(){
+      alert()
+      let getmesg = $("#textAreaExample").val()
+      socket.emit('chat_message', getmesg)
+  })
+</script>
