@@ -16,31 +16,77 @@ app.set('view engine', 'ejs')
 app.set('views', 'templates')
 
 app.get('/', (req, res) => {
-    res.render('index.ejs')
+  res.render('home.ejs')
+})
+
+app.get('/live', (req, res) => {
+    if(req.session.username != '') {
+      res.render('index.ejs')
+    } else {
+      res.redirect('live/room')
+    }
 });
 
-app.post('/', (req, res) => {
+app.post('/live', (req, res) => {
     req.session.username = req.body.username
-    res.redirect('/room')
+    res.redirect('live/room')
 });
 
-app.get('/room', (req, res) => {
+app.get('/live/room', (req, res) => {
     res.render('room.ejs', {username: req.session.username})
 });
 
+app.get('/chat' , (req, res) => {
+  res.render('chat')
+})
+
+app.get('/user', (req, res) => {
+  res.render('index.ejs')
+})
+
+app.post('/user', (req, res) => {
+  req.session.username = req.body.username
+  res.redirect('onetoone')
+});
+
+app.get('/onetoone', (req, res) => {
+  res.render('onetoone', {username: req.session.username})
+})
+
 io.on('connection', (socket) => {
   console.log('a user connected');
-  console.log(socket)
-  io.emit('welcomemk', 'hi user welcome to our chat app')
+  const users = [];
+  for (let [id, socket] of io.of("/").sockets) {
+    users.push({
+      userID: id,
+      username: socket.handshake.auth.username,
+    });
+  }
+  io.emit("users", users);
+
   socket.on('disconnect', () => {
       console.log('user discounted')
+      const users = [];
+      for (let [id, socket] of io.of("/").sockets) {
+        users.push({
+          userID: id,
+          username: socket.handshake.auth.username,
+        });
+      }
+      socket.broadcast.emit("users", users);
   })
+
+  socket.broadcast.emit("user connected", {
+    userID: socket.id,
+    username: socket.username,
+  });
+
   socket.on('chat_message', msg => {
       console.log(msg)
     io.emit('chat_message', msg)
   })
 });
 
-server.listen(3000, () => {
-  console.log('listening on *:3000');
+server.listen(4000, () => {
+  console.log('listening on *:4000');
 });

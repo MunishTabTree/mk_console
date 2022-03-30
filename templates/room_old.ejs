@@ -1,0 +1,87 @@
+<script src="/socket.io/socket.io.js"></script>
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  rel="stylesheet"
+/>
+
+<link
+  href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+  rel="stylesheet"
+/>
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.11.0/mdb.min.css"
+  rel="stylesheet"
+/>
+
+<!-- MDB -->
+<script
+  type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.11.0/mdb.min.js"
+></script>
+<section style="background-color: #eee;">
+    <div class="container">
+  
+      <div class="row d-flex justify-content-center">
+        <div class="col-md-12">
+  
+          <div class="card" id="chat1" style="border-radius: 15px;">
+            <div
+              class="card-header d-flex justify-content-between align-items-center p-3 bg-info text-white border-bottom-0"
+              style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+              <i class="fas fa-angle-left"></i>
+              <p class="mb-0 fw-bold">Live chat</p>
+              <i class="fas fa-times"></i>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                  <div class="col-md-12" id="main_msg_body"></div>
+                  <div class="col-md-12">
+                    <div class="form-outline">
+                      <div class="row">
+                        <div class="col-md-10" class="form-outline">
+                            <textarea class="form-control" id="textAreaExample" rows="4"></textarea>
+                            <label class="form-label" for="textAreaExample">Type your message</label>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary" id="senmessahe">Send</button>
+                        </div>
+                    </div>
+                  </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+  
+        </div>
+      </div>
+  
+    </div>
+  </section>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+<script>
+  var socket = io();
+  var input = document.getElementById('textAreaExample');
+    socket.on('welcomemk', (_msg) => {
+        console.log(_msg)
+    })
+
+    socket.on('chat_message', msg => {
+        if(msg.username == '<%= username %>') {
+          $("#main_msg_body").append(`<div class="d-flex flex-row justify-content-end mb-4"> <div class="p-3 me-3 border" style="border-radius: 15px; background-color: #fbfbfb;">
+            <label style="font-size:10px">You</label>
+            <p class="small mb-0">${msg.msg}</p>
+          </div></div>`)
+        } else {
+          $("#main_msg_body").append(`<div class="d-flex flex-row justify-content-start mb-4"><div class="p-3 ms-3" style="border-radius: 15px; background-color: rgba(57, 192, 237,.2);"> <label style="font-size:10px">${msg.username}</label> <p class="small mb-0">${msg.msg}</p></div></div>`)
+        }
+    })
+
+  $("#senmessahe").click(function(){
+      let getmesg = $("#textAreaExample").val()
+      $("#textAreaExample").val('')
+      socket.emit('chat_message', {msg: getmesg, username: '<%= username %>'})
+  })
+</script>

@@ -63,7 +63,17 @@
             </header>
           
             <div class="row rounded-lg overflow-hidden shadow">
-              <div class="col-md-12 px-0">
+                <div class="col-md-5">
+                    <div class="bg-white">
+                        <div class="bg-gray px-4 py-2 bg-light">
+                          <p class="h5 mb-0 py-1">Chat</p>
+                        </div>
+                        <div class="messages-box">
+                          <div class="list-group rounded-0" id="userlist"></div>
+                        </div>
+                    </div>
+                </div>
+              <div class="col-md-7 px-0">
                 <div class="chat-box px-4 py-5 chat-box" id="main_msg_body"></div>
                   <div class="input-group">
                     <input type="text" id="textAreaExample" placeholder="Type a message" aria-describedby="button-addon2" class="form-control rounded-0 border-0 py-4 bg-light">
@@ -80,6 +90,11 @@
 
     <script>
         var socket = io();
+        let allusers = []
+        const username = '<%= username %>'
+        console.log(username)
+        socket.auth = { username };
+        socket.connect();
         var input = document.getElementById('textAreaExample');
             socket.on('welcomemk', (_msg) => {
                 console.log(_msg)
@@ -113,9 +128,38 @@
                 var scrollBottom = $("#main_msg_body").scrollTop() + $("#main_msg_body").height();
                 $("#main_msg_body").scrollTop(scrollBottom)
             })
-        if('<%= username %>' == '' || '<%= username %>' == undefined) {
-            window.location.assign('/')
-        }
+
+            socket.on("users", (users) => {
+                users.forEach((user) => {
+                    user.self = user.userID === socket.id;
+                });
+                // put the current user first, and then sort by username
+                allusers = users.sort((a, b) => {
+                    if (a.self) return -1;
+                    if (b.self) return 1;
+                    if (a.username < b.username) return -1;
+                    return a.username > b.username ? 1 : 0;
+                });
+                // console.log(allusers)
+                $("#userlist").html('')
+                users.forEach(element => {
+                    if(!element.self){
+                        $("#userlist").append(` <a class="list-group-item list-group-item-action list-group-item-light rounded-0">
+                        <div class="media"><img src="https://bootstrapious.com/i/snippets/sn-chat/avatar.svg" alt="user" width="50" class="rounded-circle">
+                        <div class="media-body ml-4">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                            <h6 class="mb-0">${element.username} ${element.self?'(you)':''}</h6><small class="small font-weight-bold">30 Aug</small>
+                            </div>
+                        </div>
+                        </div>
+                    </a>`)
+                }
+                });
+            });
+
+            if('<%= username %>' == '' || '<%= username %>' == undefined) {
+                window.location.assign('/')
+            }
 
         $("#senmessahe").click(function(){
             let getmesg = $("#textAreaExample").val()
