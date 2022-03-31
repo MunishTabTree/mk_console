@@ -74,13 +74,13 @@
                     </div>
                 </div>
               <div class="col-md-7 px-0">
-                <div class="chat-box px-4 py-5 chat-box" id="main_msg_body"></div>
-                  <div class="input-group">
-                    <input type="text" id="textAreaExample" placeholder="Type a message" aria-describedby="button-addon2" class="form-control rounded-0 border-0 py-4 bg-light">
-                    <div class="input-group-append">
-                      <button id="button-addon2" type="button" id="senmessahe" class="btn btn-link"> <i class="fa fa-paper-plane" id="senmessahe"></i></button>
-                    </div>
+                <div class="chat-box px-4 py-5 chat-box mainchatboxwindows" id="main_msg_body" ></div>
+                <div class="input-group">
+                  <input type="text" id="textAreaExample" placeholder="Type a message" aria-describedby="button-addon2" class="form-control rounded-0 border-0 py-4 bg-light">
+                  <div class="input-group-append">
+                    <button id="button-addon2" type="button" id="senmessahe" class="btn btn-link"> <i class="fa fa-paper-plane" id="senmessahe"></i></button>
                   </div>
+                </div>
               </div>
             </div>
           </div>
@@ -91,6 +91,8 @@
     <script>
         var socket = io();
         let allusers = []
+        let currentMessage = []
+        let MainUserId = null
         const username = '<%= username %>'
         console.log(username)
         socket.auth = { username };
@@ -134,12 +136,8 @@
                     user.self = user.userID === socket.id;
                 });
                 // put the current user first, and then sort by username
-                allusers = users.sort((a, b) => {
-                    if (a.self) return -1;
-                    if (b.self) return 1;
-                    if (a.username < b.username) return -1;
-                    return a.username > b.username ? 1 : 0;
-                });
+                MainUserId = users.filter((x) => x.self)[0].userID;
+                console.log(MainUserId)
                 // console.log(allusers)
                 $("#userlist").html('')
                 users.forEach(element => {
@@ -147,7 +145,7 @@
                         $("#userlist").append(` <a class="list-group-item list-group-item-action list-group-item-light rounded-0">
                         <div class="media"><img src="https://bootstrapious.com/i/snippets/sn-chat/avatar.svg" alt="user" width="50" class="rounded-circle">
                         <div class="media-body ml-4">
-                            <div class="d-flex align-items-center justify-content-between mb-1">
+                            <div class="d-flex align-items-center justify-content-between mb-1 chatprivatebtnclick" bodyiddata="${MainUserId+element.userID}" fromid="${element.userID}">
                             <h6 class="mb-0">${element.username} ${element.self?'(you)':''}</h6><small class="small font-weight-bold">30 Aug</small>
                             </div>
                         </div>
@@ -160,6 +158,38 @@
             if('<%= username %>' == '' || '<%= username %>' == undefined) {
                 window.location.assign('/')
             }
+
+            // socket.emit("private message", {
+            //   content,
+            //   to: this.selectedUser.userID,
+            // });
+
+            socket.on("private_message", ({ content, from, to }) => {
+              if(currentMessage[String(from)+String(to)].length) {
+                currentMessage[String(from)+String(to)].push(content)
+              } else {
+                currentMessage[String(from)+String(to)] = []
+              }
+              console.log(currentMessage)
+              // for (let i = 0; i < this.users.length; i++) {
+              //   const user = this.users[i];
+              //   if (user.userID === from) {
+              //     user.messages.push({
+              //       content,
+              //       fromSelf: false,
+              //     });
+              //     if (user !== this.selectedUser) {
+              //       user.hasNewMessages = true;
+              //     }
+              //     break;
+              //   }
+              // }
+            });
+            
+            $(document).on("click",".chatprivatebtnclick", function(){
+                $(".mainchatboxwindows").attr("id",$(this).attr('bodyiddata'))
+                $("#senmessahe").attr('toooid', $(this).attr("fromid"))
+            })
 
         $("#senmessahe").click(function(){
             let getmesg = $("#textAreaExample").val()

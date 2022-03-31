@@ -85,6 +85,14 @@ io.on('connection', (socket) => {
       console.log(msg)
     io.emit('chat_message', msg)
   })
+
+  socket.on("private_message", ({ content, to }) => {
+    socket.to(to).emit("private_message", {
+      content,
+      from: socket.id,
+    });
+  });
+
 });
 
 server.listen(4000, () => {
