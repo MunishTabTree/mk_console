@@ -86,10 +86,14 @@ io.on('connection', (socket) => {
     io.emit('chat_message', msg)
   })
 
-  socket.on("private_message", ({ content, to }) => {
+  socket.on("private_message", ({ content,from,to,username,sentdate }) => {
+    console.log(to)
     socket.to(to).emit("private_message", {
       content,
-      from: socket.id,
+      from,
+      to,
+      sentdate,
+      username
     });
   });
 
