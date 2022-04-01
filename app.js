@@ -64,6 +64,15 @@ io.on('connection', (socket) => {
   }
   io.emit("users", users);
 
+  socket.on('private_message_typing', data => {
+    socket.to(data.toid).emit('private_message_typing', data)
+  })
+
+  socket.on('private_message_not_typing', data => {
+    console.log(data)
+    socket.to(data.toid).emit('private_message_not_typing', data)
+  })
+
   socket.on('disconnect', () => {
       console.log('user discounted')
       const users = [];

@@ -65,6 +65,7 @@
           
             <div class="row rounded-lg overflow-hidden shadow">
               <div class="col-5" id="userlist"></div>
+              <div class="col-7 px-0"> <h2>Welcome To Mk Chat</h2></div>
               <div class="col-7 px-0">
                 <div class="chat-box px-4 py-5 chat-box mainchatboxwindows" id="main_msg_body" ></div>
                 <div class="input-group">
@@ -116,6 +117,8 @@
                         <div class="media-body ml-4">
                             <div class="d-flex align-items-center justify-content-between mb-1">
                             <p class="text-break">${element.username} ${element.self?'(you)':''}</p><p class="badge badge-dark" id="${element.userID}count"></p>
+                            <br>
+                            <p id="${element.userID}typingstatus"></p>
                             </div>
                         </div>
                         </div>
@@ -200,13 +203,27 @@
                 $(".mainchatboxwindows").attr("id",$(this).attr('bodyiddata'))
                 $(`#${messagebodyid}`).html('')
                 tousername = $(this).attr('username')
-                $("#senmessahe").attr('toooid', $(this).attr("fromid"))
+                $("#senmessahe, #textAreaExample").attr('toooid', $(this).attr("fromid"))
                 $(`#${$(this).attr("fromid")}count`).text('')
                 currentprivatetoid = $(this).attr("fromid")
                 if(currentMessage[String($(this).attr("fromid"))+String(MainUserId)]) {
                   loopmsgdata(currentMessage[String($(this).attr("fromid"))+String(MainUserId)])
                 }
             })
+        $("#textAreaExample").keydown(function() {
+          socket.emit('private_message_typing', {toid: $(this).attr('toooid'), fromid: MainUserId, username})
+        })
+        socket.on('private_message_typing', data => {
+          $(`#${data.fromid}typingstatus`).text(`${data.username} is typing...`)
+        })
+
+        $("#textAreaExample").keyup(function() {
+          socket.emit('private_message_not_typing', {toid: $(this).attr('toooid'), fromid: MainUserId})
+        })
+
+        socket.on('private_message_not_typing', data => {
+          $(`#${data.fromid}typingstatus`).text('')
+        })
 
         $("#senmessahe").click(function(){
             let getmesg = $("#textAreaExample").val()
