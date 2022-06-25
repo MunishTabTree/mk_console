@@ -19,6 +19,10 @@ const UserModel = sequelize.define('User', {
     freezeTableName: true
 });
 
+(async () => {
+ //await UserModel.sync({force: true})
+})()
+
 module.exports = UserModel
 
 

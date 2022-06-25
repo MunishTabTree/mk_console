@@ -15,7 +15,7 @@ const ChatMessageModel = sequelize.define('ChatMessage', {
 });
 
 (async() => {
-    // await ChatMessageModel.sync({force:true})
+    await ChatMessageModel.sync({force:true})
 })();
 
 module.exports = ChatMessageModel
