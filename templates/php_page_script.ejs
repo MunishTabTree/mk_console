@@ -1,0 +1,5 @@
+const Tabtree_Socket = io('wss://gogdev.treeone.one/php_tracking_client',{transports: ['websocket']})
+const tabtree_connect_socket = (username, appcode, userid, app) => {
+    Tabtree_Socket.emit('connect_user', { username, appcode, userid, app})
+}
+

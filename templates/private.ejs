@@ -1,0 +1,391 @@
+<%- include('header') %>
+<style>
+  #kt_chat_messenger_body .d-flex.flex-column {
+    border: 2px solid;
+    padding: 10px;
+    border-radius: 20px;
+  }
+</style>
+  <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <!--begin::Post-->
+    <div class="post d-flex flex-column-fluid" id="kt_post">
+      <!--begin::Container-->
+      <div id="kt_content_container" class="container-xxl">
+        <!--begin::Layout-->
+        <div class="d-flex flex-column flex-lg-row">
+          <!--begin::Sidebar-->
+          <div class="flex-column flex-lg-row-auto w-100 w-lg-300px w-xl-400px mb-10 mb-lg-0">
+            <!--begin::Contacts-->
+            <div class="card card-flush">
+              <!--begin::Card body-->
+              <div class="card-body pt-5" id="kt_chat_contacts_body">
+                <!--begin::List-->
+                <div class="scroll-y me-n5 pe-5 h-200px h-lg-auto" data-kt-scroll="true"
+                  data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto"
+                  data-kt-scroll-dependencies="#kt_header, #kt_toolbar, #kt_footer, #kt_chat_contacts_header"
+                  data-kt-scroll-wrappers="#kt_content, #kt_chat_contacts_body" id="userlist" data-kt-scroll-offset="5px">
+
+                <% userlist.forEach((mk) => { %>
+                  <% if(mk.id != user.id){ %>
+                    <div class="d-flex flex-stack py-4 chatprivatebtnclick" bodyiddata="<%= String(user.id)+String(mk.id) %>" username="<%= mk.name %>" fromid="<%= mk.id %>">
+                      <div class="d-flex align-items-center">
+                        <div class="symbol symbol-45px symbol-circle">
+                          <span class="symbol-label bg-light-danger text-danger fs-6 fw-bolder"><%= (mk.name.charAt(0)+mk.name.charAt(1)).toUpperCase() %></span>
+                        </div>
+                        <div class="ms-5">
+                          <a href="#" class="fs-5 fw-bolder text-gray-900 text-hover-primary mb-2"><%= mk.name %></a>
+                          <span class="badge badge-danger badge-circle w-10px h-10px me-1 <%= mk.id %>useractiveorinactivestatus"></span>
+                          <div class="badge badge-dark" id="<%= mk.id %>count"></div>
+                          <div class="<%= mk.id %>typingstatus" style="font-size:7px"></div>
+                        </div>
+                      </div>
+                      <div class="d-flex flex-column align-items-end ms-2">
+                        <span class="text-muted fs-7 mb-1"></span>
+                      </div>
+                    </div>
+                  <% } %>
+                <% }) %>
+
+                </div>
+                <!--end::List-->
+              </div>
+              <!--end::Card body-->
+            </div>
+            <!--end::Contacts-->
+          </div>
+          <!--end::Sidebar-->
+          <!--begin::Content-->
+          <div class="flex-lg-row-fluid ms-lg-7 ms-xl-10">
+            <!--begin::Messenger-->
+            <div class="card" id="kt_chat_messenger">
+              <!--begin::Card header-->
+              <div class="card-header" id="kt_chat_messenger_header">
+                <!--begin::Title-->
+                <div class="card-title" id="MKTopCard">
+                  <!--begin::User-->
+                  <div class="d-flex justify-content-center flex-column me-3">
+                    <a href="#" class="fs-4 fw-bolder text-gray-900 text-hover-primary me-1 mb-2 lh-1" id="MainUserName">Brian</a>
+                    <!--begin::Info-->
+                    <div class="mb-0 lh-1">
+                      <span class="badge badge-success badge-circle w-10px h-10px me-1" id="userActiveStatusdot"></span>
+                      <span class="fs-7 fw-bold text-muted" id="userActiveStatustext">Active</span>
+                    </div>
+                    <!--end::Info-->
+                  </div>
+                  <!--end::User-->
+                </div>
+
+
+                <div class="card-title" id="MKTopCard">
+                  <div class="d-flex justify-content-center flex-column me-3">
+                    <div id="MainUserNametypingstatus" style="font-size:7px"></div>
+                  </div>
+                </div>
+
+
+                <!--end::Title-->
+                <!--begin::Card toolbar-->
+                <div class="card-toolbar">
+                  <!--begin::Menu-->
+                  <div class="me-n3">
+                    <button class="btn btn-sm btn-icon btn-active-light-primary" data-kt-menu-trigger="click"
+                      data-kt-menu-placement="bottom-end">
+                      <i class="bi bi-three-dots fs-2"></i>
+                    </button>
+                    <!--begin::Menu 3-->
+                    <div
+                      class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-bold w-200px py-3"
+                      data-kt-menu="true">
+                      <!--begin::Heading-->
+                      <div class="menu-item px-3">
+                        <div class="menu-content text-muted pb-2 px-3 fs-7 text-uppercase">Contacts
+                        </div>
+                      </div>
+                      <!--end::Menu item-->
+                    </div>
+                    <!--end::Menu 3-->
+                  </div>
+                  <!--end::Menu-->
+                </div>
+                <!--end::Card toolbar-->
+              </div>
+              <!--end::Card header-->
+              <!--begin::Card body-->
+              <div class="card-body" id="kt_chat_messenger_body">
+                <!--begin::Messages-->
+                <div class="scroll-y me-n5 pe-5 h-300px h-lg-auto mainchatboxwindows" data-kt-element="messages" data-kt-scroll="true"
+                  data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto"
+                  data-kt-scroll-dependencies="#kt_header, #kt_toolbar, #kt_footer, #kt_chat_messenger_header, #kt_chat_messenger_footer"
+                  data-kt-scroll-wrappers="#kt_content, #kt_chat_messenger_body" data-kt-scroll-offset="5px">
+                </div>
+                <!--end::Messages-->
+              </div>
+              <!--end::Card body-->
+              <!--begin::Card footer-->
+              <div class="card-footer pt-4" id="kt_chat_messenger_footer">
+                <!--begin::Input-->
+                <textarea class="form-control form-control-flush mb-3" rows="1" data-kt-element="input"
+                  placeholder="Type a message" id="getMsg"></textarea>
+                <!--end::Input-->
+                <!--begin:Toolbar-->
+                <div class="d-flex flex-stack">
+                  <!--begin::Actions-->
+                  <div class="d-flex align-items-center me-2">
+                    <button class="btn btn-sm btn-icon btn-active-light-primary me-1" type="button"
+                      data-bs-toggle="tooltip" title="Coming soon">
+                      <i class="bi bi-paperclip fs-3"></i>
+                    </button>
+                    <button class="btn btn-sm btn-icon btn-active-light-primary me-1" type="button"
+                      data-bs-toggle="tooltip" title="Coming soon">
+                      <i class="bi bi-upload fs-3"></i>
+                    </button>
+                  </div>
+                  <!--end::Actions-->
+                  <!--begin::Send-->
+                  <button class="btn btn-primary" id="sendmessage" type="button" data-kt-element="send">Send</button>
+                  <!--end::Send-->
+                </div>
+                <!--end::Toolbar-->
+              </div>
+              <!--end::Card footer-->
+            </div>
+            <!--end::Messenger-->
+          </div>
+          <!--end::Content-->
+        </div>
+        <!--end::Layout-->
+        <!--begin::Modals-->
+      </div>
+      <!--end::Container-->
+    </div>
+    <!--end::Post-->
+  </div>
+  <%- include('footer') %>
+  <script>
+
+  let defaultUserData = "<%=  %>"
+  let allusers = []
+  let pageRefreshed = true
+  let currentMessage = []
+  let MainUserId = "<%= user.id %>"
+  let messagebodyid = null
+  let tousername = null
+  let selectedUserId = null
+  let currentprivatetoid = null
+  let notificationsCount = {}
+  let chat_unique_id = null
+
+
+  const username = '<%= user.name %>'
+    var socket = io('/', {path: "/tt/socket.io"});
+    socket.auth = { username, userid: MainUserId  };
+    socket.connect();
+  
+    socket.on('welcome', data => {
+      console.log(data)
+    })
+
+    socket.on("users", (users) => {
+      users.forEach((element, index) => {
+        if($("#MKTopCard").attr("Mk-id") == String(MainUserId)+String(element.userID)){
+          $("#userActiveStatusdot").removeClass("badge-danger").addClass('badge-success')
+          $("#userActiveStatustext").text('active')
+        }
+        $(`.${element.userID}useractiveorinactivestatus`).removeClass('badge-danger').addClass('badge-success')
+      })
+    })
+
+
+    // custom functions 
+
+    function getActiveStatus(fromid) {
+      socket.emit("check_connection_active", fromid)
+
+      socket.on("check_connection_active", data => {
+        if('active' == data.status) {
+          $("#userActiveStatusdot").removeClass("badge-danger").addClass('badge-success')
+        } else {
+          $("#userActiveStatusdot").removeClass("badge-success").addClass('badge-danger')
+        }
+        $("#userActiveStatustext").text(data.status)
+      })
+    }
+
+
+    if(pageRefreshed) {
+      to_id  = "<%= defaultUser.id %>"
+      pageRefreshed = false
+      $("#message_body").removeClass('hidden')
+      $("#home_msg_body").addClass('hidden')
+      $('.defaultuser').css({'border-bottom':'5px solid red'})
+      // console.log(String($(this).attr("fromid"))+String(MainUserId))
+      messagebodyid = String(MainUserId) + String(to_id)
+      currentprivatetoid  = to_id
+      $(".mainchatboxwindows").attr("id",messagebodyid)
+      $("#MKTopCard").attr("Mk-id",messagebodyid)
+      $(`#${messagebodyid}`).html('')
+      tousername = "<%= defaultUser.name %>"
+      $("#MainUserName").text(tousername)
+      $('#MainUserNametypingstatus').attr('class', `${to_id}typingstatus`)
+      $("#sendmessage, #getMsg").attr('toooid', to_id)
+      $(`#${to_id}count`).text('')
+      socket.emit('private_endtoend_id', {
+        from_id: MainUserId,
+        to_id: to_id
+      })
+      getActiveStatus(to_id)
+      loopmsgdata(MainUserId, to_id)
+    }
+
+    socket.on('chat_unique_id', data => {
+      chat_unique_id = data
+    })
+
+    socket.on("private_message", ({ content, from, to,sentdate,username }) => {
+      let convertdate = new Date(sentdate)
+      if(currentprivatetoid == from){
+        $(`#${messagebodyid}`).append(`
+        <div class="d-flex justify-content-start mb-10">
+          <div class="d-flex flex-column align-items-start">
+            <div class="p-5 rounded bg-light-info text-dark fw-bold mw-lg-400px text-start"
+              data-kt-element="message-text">${content}</div>
+              <div class="ms-3">
+              <span class="text-muted fs-7 mb-1">${convertdate.toLocaleString()}</span>
+            </div>
+            </div>
+        </div>
+        `)
+        var scrollBottom = $(`#${messagebodyid}`).scrollTop() + $(`#${messagebodyid}`).height();
+        $(`#${messagebodyid}`).scrollTop(scrollBottom)
+      } else {
+        // console.log(notificationsCount[from])
+        $("#notificationalert").text(`Message from ${username}`)
+        if(notificationsCount[from] == undefined) {
+          notificationsCount[from] = 1
+          console.log(notificationsCount)
+        } else {
+          notificationsCount[from] += 1
+        }
+        console.log(`#${from}count`)
+        $(`#${from}count`).text(notificationsCount[from])
+        console.log(notificationsCount)
+      }
+
+    });
+
+
+    async function loopmsgdata(fromid, toid) {
+      const getdata = await axios.get(`chat/getdata/${fromid}/${toid}`)
+      const data = getdata.data
+      data.forEach(msg_data => {
+          element = JSON.parse(msg_data.data)
+          console.log(element)
+            let convertdate = new Date(element.sentdate)
+            console.log(element.to, MainUserId)
+            if(element.from== MainUserId) {
+                $(`#${messagebodyid}`).append(`<div class="d-flex justify-content-end mb-10">
+                <div class="d-flex flex-column align-items-end">
+                  <div class="p-2 rounded bg-light-info text-dark fw-bold mw-lg-400px text-end"
+                    data-kt-element="message-text">${element.content}</div>
+                    <div class="ms-3">
+                    <span class="text-muted fs-7 mb-1">${convertdate.toLocaleString()}</span>
+                  </div>
+                  </div>
+              </div>`);
+            } else {
+              $(`#${messagebodyid}`).append(`
+              <div class="d-flex justify-content-start mb-10">
+                <div class="d-flex flex-column align-items-start">
+                  <div class="p-2 rounded bg-light-info text-dark fw-bold mw-lg-400px text-start"
+                    data-kt-element="message-text">${element.content}</div>
+                  <div class="ms-3">
+                    <span class="text-muted fs-7 mb-1">${convertdate.toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>`)
+            }
+            var scrollBottom = $(`#${messagebodyid}`).scrollTop() + $(`#${messagebodyid}`).height();
+            $(`#${messagebodyid}`).scrollTop(scrollBottom)
+        });
+    }
+
+  $(document).on("click",".chatprivatebtnclick", async function(){
+    $(".chatprivatebtnclick").css({'border':'none'})
+    $("#message_body").removeClass('hidden')
+    $("#home_msg_body").addClass('hidden')
+    $(this).css({'border-bottom':'5px solid red'})
+    // console.log(String($(this).attr("fromid"))+String(MainUserId))
+    messagebodyid = $(this).attr('bodyiddata')
+    $(".mainchatboxwindows").attr("id",$(this).attr('bodyiddata'))
+    $("#MKTopCard").attr("Mk-id",messagebodyid)
+
+    $(`#${messagebodyid}`).html('')
+    tousername = $(this).attr('username')
+    $("#MainUserName").text(tousername)
+    $('#MainUserNametypingstatus').attr('class', `${$(this).attr("fromid")}typingstatus`)
+    $("#sendmessage, #getMsg").attr('toooid', $(this).attr("fromid"))
+    $(`#${$(this).attr("fromid")}count`).text('')
+    currentprivatetoid = $(this).attr("fromid")
+
+    socket.emit('private_endtoend_id', {
+      from_id: MainUserId,
+      to_id: $(this).attr("fromid")
+    })
+    getActiveStatus($(this).attr("fromid"))
+    loopmsgdata(MainUserId, $(this).attr("fromid"))
+
+    })
+
+
+
+
+
+    $("#getMsg").keydown(function() {
+      socket.emit('private_message_typing', {toid: $(this).attr('toooid'), fromid: MainUserId, username})
+    })
+    socket.on('private_message_typing', data => {
+      $(`.${data.fromid}typingstatus`).text(`${data.username} is typing...`)
+    })
+
+    $("#getMsg").keyup(function() {
+      socket.emit('private_message_not_typing', {toid: $(this).attr('toooid'), fromid: MainUserId})
+    })
+
+    socket.on('private_message_not_typing', data => {
+      $(`.${data.fromid}typingstatus`).text('')
+    })
+
+
+    socket.on('changeinactivestatus', data => {
+      if($("#MKTopCard").attr("Mk-id") == String(MainUserId)+String(data.id)){
+        $("#userActiveStatusdot").removeClass("badge-success").addClass('badge-danger')
+        $("#userActiveStatustext").text('inactive')
+      }
+      $(`.${data.sidebarstatus}`).removeClass('badge-success').addClass('badge-danger')
+    })
+
+  $("#sendmessage").click(function(){
+    let getmesg = $("#getMsg").val()
+    console.log($(this).attr('toooid'), MainUserId)
+    $("#getMsg").val('')
+    let getcurrent = new Date()
+    $(`#${messagebodyid}`).append(`
+    <div class="d-flex justify-content-end mb-5">
+      <div class="d-flex flex-column align-items-end">
+        <div class="p-2 rounded bg-light-info text-dark fw-bold mw-lg-400px text-end"
+          data-kt-element="message-text">${getmesg}</div>
+        <div class="row fs-10">
+          <span class="text-muted fs-7 mb-1">${getcurrent.toLocaleString()}</span>
+        </div>
+      </div>
+    </div>`);
+    from = $(this).attr('toooid')
+    to = MainUserId
+
+    var scrollBottom = $(`#${messagebodyid}`).scrollTop() + $(`#${messagebodyid}`).height();
+        $(`#${messagebodyid}`).scrollTop(scrollBottom)
+        console.log({content: getmesg, from: MainUserId, to: $(this).attr('toooid'),username:username,sentdate: new Date()})
+    socket.emit('private_message', {content: getmesg, from: MainUserId, to: $(this).attr('toooid'),username:username,sentdate: new Date(), chat_unique_id})
+  })
+
+  </script>

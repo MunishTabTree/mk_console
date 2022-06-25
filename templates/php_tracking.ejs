@@ -1,0 +1,101 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css"  href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css"  href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0">
+    </head>
+    <script src="socket.io/socket.io.js"></script>
+    <body>
+        
+
+        <div class="container mt-3">
+            <h2>Tracking Tabs</h2>
+            <br>
+            <ul class="nav nav-tabs" id="mk_bar">
+            </ul>
+            <div class="tab-content" id="mk_tab">
+            </div>
+        </div>
+
+
+        <div id="maindataload"></div>
+    </body>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let app_sno = 0
+        let room_sno = 0
+        let user_sno = 0
+        const socket = io('/php_tracking_client', {path: "/tt/socket.io"})
+        socket.on('welcome', data => {
+            console.log(data)
+        })
+        socket.emit('connect_admin', {username:'munish'})
+
+        socket.on('new_room_created', data => {
+            $(`#mk_nav_bar${data.app}`).append(`<li class="nav-item">
+                <a class="nav-link ${!room_sno?'active':''}" data-toggle="tab" href="#${data.roomid}">${data.roomid}</a>
+              </li>`)
+              $(`#mk_tab_content${data.app}`).append(`<div id="${data.roomid}" class="container tab-pane fade ${!room_sno?'active show':''}"><br>
+                <div id="${data.roomid}users"></div>
+              </div>`)
+        })
+
+        socket.on('room_list', data_main => {
+            data_main.forEach((data) =>{
+                $(`body #mk_nav_bar${data.app}`).append(`<li class="nav-item">
+                <a class="nav-link ${!room_sno?'active':''}" data-toggle="tab" href="#${data.roomid}">${data.roomid}</a>
+              </li>`)
+              $(`body #mk_tab_content${data.app}`).append(`<div id="${data.roomid}" class="container tab-pane fade ${!room_sno?'active show':''}"><br>
+                <div id="${data.roomid}users"></div>
+              </div>`)
+              room_sno++
+            })
+        })
+
+        socket.on('new_App_created', data => {
+            $("#mk_bar").append(`<li class="nav-item">
+                <a class="nav-link ${!app_sno?'active':''}" data-toggle="tab" href="#${data}">${data}</a>
+              </li>`)
+            $("#mk_tab").append(`<div id="${data}" class="container tab-pane fade ${!app_sno?'active show':''}"><ul class="nav nav-tabs" id="mk_nav_bar${data}">
+            </ul>
+            <div class="tab-content" id="mk_tab_content${data}">
+            </div>
+        </div>`)
+            app_sno++
+        })
+
+        socket.on('php_apps_list', data => {
+            data.forEach(element => {
+                $("#mk_bar").append(`<li class="nav-item">
+                    <a class="nav-link ${!app_sno?'active':''}" data-toggle="tab" href="#${element}">${element}</a>
+                </li>`)
+                $("#mk_tab").append(`<div id="${element}" class="container tab-pane fade ${!app_sno?'active show':''}"><ul class="nav nav-tabs" id="mk_nav_bar${element}">
+                </ul>
+                <div class="tab-content" id="mk_tab_content${element}">
+                </div></div>`)
+                app_sno++
+            });
+        })
+
+        socket.on("new_user_connected", data =>{
+            let UserDetail = data.mainroomid+data.userid
+            $(`html #${data.mainroomid}users`).append(`<div class="col-md-12" id="${UserDetail}userdata"><b id="${UserDetail}username">${data.username} (${data.userid})</b> -> <b id="${UserDetail}page">${data.link}</b>`)
+        })
+
+        socket.on('apps_list', getUsers => {
+            getUsers.forEach(data => {
+                let UserDetail = data.mainroomid+data.userid
+                $(`html #${data.mainroomid}users`).append(`<div class="col-md-12" id="${UserDetail}userdata"><b id="${UserDetail}username">${data.username} (${data.userid})</b> -> <b id="${UserDetail}page">${data.link}</b>`)
+            });
+        })
+
+
+        // Update or Delete Connections
+        socket.on('changeUserDataStatus', data => {
+            const UserDetail = data.mainroomid+data.userid
+            $(`html #${UserDetail}username`).text(data.username)
+            $(`html #${UserDetail}page`).text(data.link)
+        })
+    </script>
+</html>
